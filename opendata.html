@@ -28,15 +28,29 @@ var path = d3.geo.path()
 
 var g = svg.append("g");
 
+
+
 // load and display the World
 d3.json("d3.v3/countries.geo.json", function(error, topology) {
+	
+	var colorByObject = {};
+
+	var n = 0;
+	topology.objects.countries.geometries.forEach(function(o, index) {
+	      colorByObject[o.id] = 'rgb('+n+',0,0)';
+	      n++;
+	});
+
+	
     g.selectAll("path")
       .data(topojson.object(topology, topology.objects.countries)
           .geometries)
     .enter()
       .append("path")
       .attr("d", path)
-      });
+      .style("fill", function(d) { return colorByObject[d.id]; })
+}
+);
 
 </script>
 </body>
