@@ -15,6 +15,7 @@ path {
 <div id='map'></div>
 <div id='commands'>
 	<a id='changeToBlue' href='javascript:;'>Change to blue</a>
+	<a id='pickSwitzerland' href='javascript:;'>Find Switzerland</a>
 </div>
 
 <script>
@@ -79,6 +80,14 @@ d3.selectAll("#changeToBlue").on("click", function(d) {
 	g.selectAll("path").transition().duration(1000).style("fill", function(d) {
 		return quality(n++);
 	});
+});
+
+d3.selectAll("#pickSwitzerland").on("click", function(d) {
+	var n=0;
+	var ch = g.selectAll("path").filter(function(e,i){
+		return e.id=="CHE";
+	})[0][0];
+	d3.select(ch).transition().duration(1000).style("fill", "rgb(0,0,255)");
 });
 
 </script>
