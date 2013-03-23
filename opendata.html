@@ -38,20 +38,21 @@ var g = svg.append("g");
 
 
 // load and display the World
-d3.json("d3.v3/countries.geo.json", function(error, topology) {
-	
+d3.json("countries.geo.json", function(error, topology) {
+
+	var countries = { "type":"FeatureCollection", "features": [] };
+	countries.features = countries.features.concat(topology.features);
+
 	var colorByObject = {};
 
 	var n = 0;
-	topology.objects.countries.geometries.forEach(function(o, index) {
+	countries.features.forEach(function(o, index) {
 	      colorByObject[o.id] = 'rgb('+n+',0,0)';
 	      n++;
 	});
 
-	
     g.selectAll("path")
-      .data(topojson.object(topology, topology.objects.countries)
-          .geometries)
+      .data(countries.features)
       .enter()
       .append("path")
       .attr("d", path)
@@ -65,6 +66,7 @@ function click(d) {
 		return e.id==d.id;
 	})[0][0];
 	d3.select(clicked).transition().duration(1000).style("fill", "rgb(0,255,0)");
+	alert(clicked.__data__.properties.name)
 	//$(clicked).css("fill", "rgb(0,255,0)");
 }
 
