@@ -46,19 +46,14 @@ d3.json("countries.geo.json", function(error, topology) {
 
 	var colorByObject = {};
 
-	var n = 0;
-	countries.features.forEach(function(o, index) {
-	      colorByObject[o.id] = 'rgb('+n+',0,0)';
-	      n++;
-	});
-
     g.selectAll("path")
       .data(countries.features)
       .enter()
       .append("path")
       .attr("d", path)
-      .style("fill", function(d) { return colorByObject[d.id]; })
       .on("click", click);
+    
+    step2();
 }
 );
 
@@ -67,8 +62,7 @@ function click(d) {
 		return e.id==d.id;
 	})[0][0];
 	d3.select(clicked).transition().duration(1000).style("fill", "rgb(0,255,0)");
-	alert(clicked.__data__.properties.name)
-	//$(clicked).css("fill", "rgb(0,255,0)");
+	//alert(clicked.__data__.properties.name)
 }
 
 function quality(n){
@@ -89,6 +83,32 @@ d3.selectAll("#pickSwitzerland").on("click", function(d) {
 	})[0][0];
 	d3.select(ch).transition().duration(1000).style("fill", "rgb(0,0,255)");
 });
+
+function step2() {
+	//load data 
+	d3.csv("M2.csv", function(m2) {
+		//find absolute maximum
+		var max = 0;
+		m2.forEach(function(o) {
+			var value = parseInt(o["2000"]);
+			if ( value > max )
+				max = value;
+// 			for (var pair in o) {
+// 				try {
+// 					var value = parseInt(o[pair]);
+// 					if ( value > max )
+// 						max = value;
+// 				} catch (e) {}
+// 			}
+		});
+		var colorByObject = {};
+		m2.forEach(function(o) {
+			var value = parseInt(o["2000"])*255.0/max;
+			colorByObject[o.code] = 'rgb('+parseInt(value)+',0,0)';
+		});
+		g.selectAll("path").style("fill", function(d) { return colorByObject[d.id]; })
+	});
+}
 
 </script>
 </body>
