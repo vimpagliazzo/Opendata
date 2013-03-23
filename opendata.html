@@ -10,6 +10,13 @@ path {
 <body>
 <script type="text/javascript" src="d3.v3/d3.v3.js"></script>
 <script src="d3.v3/topojson.js"></script>
+<!-- script src="js/jquery-1.9.1.min.js"></script> -->
+
+<div id='map'></div>
+<div id='commands'>
+	<a id='changeToBlue' href='javascript:;'>Change to blue</a>
+</div>
+
 <script>
 var width = 1000,
     height = 600;
@@ -19,7 +26,7 @@ var projection = d3.geo.mercator()
     .scale(600)
     .rotate([-0,0]);
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#map").append("svg")
     .attr("width", width)
     .attr("height", height);
 
@@ -45,12 +52,28 @@ d3.json("d3.v3/countries.geo.json", function(error, topology) {
     g.selectAll("path")
       .data(topojson.object(topology, topology.objects.countries)
           .geometries)
-    .enter()
+      .enter()
       .append("path")
       .attr("d", path)
       .style("fill", function(d) { return colorByObject[d.id]; })
+      .on("click", click);
 }
 );
+
+function click(d) {
+	var clicked = g.selectAll("path").filter(function(e,i){
+		return e.id==d.id;
+	})[0][0];
+	d3.select(clicked).transition().duration(1000).style("fill", "rgb(0,255,0)");
+	//$(clicked).css("fill", "rgb(0,255,0)");
+}
+
+d3.selectAll("#changeToBlue").on("click", function(d) {
+	var n=0;
+	g.selectAll("path").transition().duration(1000).style("fill", function(d) {
+		return "rgb(0, 0, "+n+++")";
+	});
+});
 
 </script>
 </body>
