@@ -15,7 +15,7 @@ path {
 <div id='map'></div>
 <div id='commands'>
 	<a id='changeToBlue' href='javascript:;'>Change to blue</a>
-	<a id='pickSwitzerland' href='javascript:;'>Find Switzerland</a>
+	<a id='pickThreeCountries' href='javascript:;'>Find Switzerland</a>
 </div>
 
 <script>
@@ -76,12 +76,19 @@ d3.selectAll("#changeToBlue").on("click", function(d) {
 	});
 });
 
-d3.selectAll("#pickSwitzerland").on("click", function(d) {
+
+
+d3.selectAll("#pickThreeCountries").on("click", function(d) {
 	var n=0;
-	var ch = g.selectAll("path").filter(function(e,i){
-		return e.id=="CHE";
-	})[0][0];
-	d3.select(ch).transition().duration(1000).style("fill", "rgb(0,0,255)");
+	var countries=new Array("CHE","GBR","DEU");
+	for (var k=0;k<countries.length;k++)
+	{ 
+		var ch = g.selectAll("path").filter(function(e,i){
+			return e.id==countries[k];
+		})[0][0];
+		
+		d3.select(ch).transition().duration(1000).style("fill", "rgb(0,0,255)");
+	}
 });
 
 function step2() {
