@@ -68,10 +68,14 @@ function click(d) {
 	//$(clicked).css("fill", "rgb(0,255,0)");
 }
 
+function quality(n){
+	return "rgb("+n+", "+n+", "+n+")"
+}
+
 d3.selectAll("#changeToBlue").on("click", function(d) {
 	var n=0;
 	g.selectAll("path").transition().duration(1000).style("fill", function(d) {
-		return "rgb(0, 0, "+n+++")";
+		return quality(n++);
 	});
 });
 
