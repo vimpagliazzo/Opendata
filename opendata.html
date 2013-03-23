@@ -62,7 +62,7 @@ function click(d) {
 		return e.id==d.id;
 	})[0][0];
 	d3.select(clicked).transition().duration(1000).style("fill", "rgb(0,255,0)");
-	//alert(clicked.__data__.properties.name)
+	alert(clicked.__data__.properties.name)
 }
 
 function quality(n){
