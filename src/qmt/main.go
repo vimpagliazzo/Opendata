@@ -118,9 +118,9 @@ func printRecord(iso3 map[string]string, country1, country2, percent string, exp
 	}
 
 	if export {
-		fmt.Printf("%v,%v,%v\n", country1, country2, percent)
+		fmt.Printf("%v,%v,%v\n", country1, country2, percent, "ex")
 	} else {
-		fmt.Printf("%v,%v,%v\n", country2, country1, percent)
+		fmt.Printf("%v,%v,%v\n", country2, country1, percent, "in")
 	}
 
 	return nil
