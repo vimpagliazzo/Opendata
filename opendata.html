@@ -91,29 +91,81 @@ d3.selectAll("#pickThreeCountries").on("click", function(d) {
 	}
 });
 
+var m2 = new Array(0);
+var im = new Array(0);
+var ex = new Array(0);
+var V = new Array(0);
+var prop = new Array(0);
+var Vq = new Array(0);
+var q = new Array(0);
+
 function step2() {
-	//load data 
-	d3.csv("M2.csv", function(m2) {
-		//find absolute maximum
-		var max = 0;
-		m2.forEach(function(o) {
-			var value = parseInt(o["2000"]);
-			if ( value > max )
-				max = value;
-// 			for (var pair in o) {
-// 				try {
-// 					var value = parseInt(o[pair]);
-// 					if ( value > max )
-// 						max = value;
-// 				} catch (e) {}
-// 			}
+	d3.csv("M2.csv", function(m2_) {
+		m2_.forEach(function(o){
+			m2[o.code] = o;
 		});
-		var colorByObject = {};
 		m2.forEach(function(o) {
-			var value = parseInt(o["2000"])*255.0/max;
-			colorByObject[o.code] = 'rgb('+parseInt(value)+',0,0)';
+			try {
+				V[o.code] = o["1960"];
+			} catch (e) {}
 		});
-		g.selectAll("path").style("fill", function(d) { return colorByObject[d.id]; })
+		step3();
+// 		m2.forEach(function(o) {
+// 			var value = parseInt(o["2000"])*255.0/max;
+// 			colorByObject[o.code] = 'rgb('+parseInt(value)+',0,0)';
+// 		});
+// 		g.selectAll("path").style("fill", function(d) { return colorByObject[d.id]; })
+	});
+}
+
+function step3() {
+	d3.csv("import.csv", function(im_) {
+		im_.forEach(function(o){
+			im[o.code] = o;
+		});
+		step4();
+	});
+}
+
+function step4() {
+	d3.csv("export.csv", function(ex_) {
+		ex_.forEach(function(o){
+			ex[o.code] = o;
+		});
+		step5();
+	});
+}
+
+function step5() {
+	d3.csv("trade_share.csv", function(prop_) {
+		prop_.forEach(function(o){
+			prop[o.code] = o;
+		});
+		animate();
+	});
+}
+
+var year = 1961;
+function animate() {
+	if ( year > 2011 )
+		return;
+	m2.forEach(function(d){
+		V[d.code] = ex[d.code][""+year] - im[d.code][""+year] + m2[d.code][""+year] - m2[d.code][""+(year-1)];
+		var allex = 0,
+		    allim = 0;
+		prop.forEach(function(o){
+			if ( (o.from == d.code && o.type=='ex') )
+				allex += ex[d.code][""+year] * q0[d.code] * o.amount;
+			if ( (o.to == d.code && o.type=='im') )
+				allim += im[d.code][""+year] * q0[d.code] * o.amount;
+		});
+		Vq[d.code] = q[d.code]*V[d.code] + allex - ellim;		
+	});
+	Vq.forEach(function(o){
+		q[o.id] = Vq[o.id]/V[o.id];
+	});
+	g.selectAll("path").style("fill", function(d) {
+		return "rgb("+q[d.id]*255+",0,0)";
 	});
 }
 

@@ -1,3 +1,4 @@
+from,to,amount,type
 ARE,IDN,11.0,ex
 E27,ARE,15.7,in
 ARE,IRN,4.7,ex
