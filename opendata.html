@@ -167,17 +167,32 @@ function animate() {
 
 		var allex = 0,
 		    allim = 0;
+<<<<<<< HEAD
 		    qin_rest = 0;
 		    qex_rest = 0;
 
+=======
+		    qin_rest = 100;
+		    qex_rest = 100;
+		    qex_avg = 0;
+		    qex_cnt = 0;
+
+//		if (d.code == "NZL")
+//		{
+//			var aaaa = "a";
+//		}
+		    
+>>>>>>> much improved version, many bug fixes, still exceptions
 		for ( var p in prop ) {
 			var o = prop[p];
+
 			// IF clause is never true
 			if ( (o.from == d.code && o.type=='ex') ){
-				if (o.to!='E27' && o.to!='TWN'){
+				if (o.to!='E27' && o.to!='TWN'){ // currently no E27 spread or Taiwan
 					try {
 						allex += ex[i][""+year] * q[o.to] * o.amount/100;
 						qex_rest -= o.amount
+						qex_avg += q[o.to] * o.amount;
 					} catch (e) {}
 				}
 			}
@@ -188,9 +203,36 @@ function animate() {
 					} catch (e) {}
 			}
 		}
+<<<<<<< HEAD
 		Vq[i] = q[i]*Vprev[i] + allex - allim;// + 0 * qex_rest * im[i][""+year] - 0 * qin-rest * im[i][""+year];
 
+=======
+		// calculate q-weighted volume, where
+		// remaining imports are weighted with current q
+		// and remaining exports with average export-q
+		
+		Vq[i] = q[i]*Vprev[i]
+		+ allex
+		- allim
+		+ qex_avg/(100-qex_rest) * qex_rest/100 * im[i][""+year]
+		- q[i] * qin_rest/100 * im[i][""+year];
+			
+>>>>>>> much improved version, many bug fixes, still exceptions
 		V[i] = parseInt(Vprev[i],10) + parseInt(ex[i][""+year],10) - parseInt(im[i][""+year],10) + parseInt(m2[i][""+year],10) - parseInt(m2[i][""+(year-1)],10);
+		
+		// if money available is ==0 prepare volumes such
+		// that q = 0 and volume is the one of the new year
+		if ( m2[i][""+(year-1)]==0 ){
+			V[i] = m2[i][""+year];
+			Vq[i]=0;	
+		}
+		
+		// check cases where V<0 although m2>0
+		if ( V[i]<0 ){
+			console.log("V<0 although m2>0; "+year+ " "+ d.code);
+		}
+		
+		// set next year's reference volume
 		Vprev[i] = V[i];
 	}
 	for ( var o in Vq ) {
