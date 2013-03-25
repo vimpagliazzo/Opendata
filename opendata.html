@@ -167,11 +167,6 @@ function animate() {
 
 		var allex = 0,
 		    allim = 0;
-<<<<<<< HEAD
-		    qin_rest = 0;
-		    qex_rest = 0;
-
-=======
 		    qin_rest = 100;
 		    qex_rest = 100;
 		    qex_avg = 0;
@@ -182,7 +177,7 @@ function animate() {
 //			var aaaa = "a";
 //		}
 		    
->>>>>>> much improved version, many bug fixes, still exceptions
+
 		for ( var p in prop ) {
 			var o = prop[p];
 
@@ -203,10 +198,7 @@ function animate() {
 					} catch (e) {}
 			}
 		}
-<<<<<<< HEAD
-		Vq[i] = q[i]*Vprev[i] + allex - allim;// + 0 * qex_rest * im[i][""+year] - 0 * qin-rest * im[i][""+year];
 
-=======
 		// calculate q-weighted volume, where
 		// remaining imports are weighted with current q
 		// and remaining exports with average export-q
@@ -217,7 +209,7 @@ function animate() {
 		+ qex_avg/(100-qex_rest) * qex_rest/100 * im[i][""+year]
 		- q[i] * qin_rest/100 * im[i][""+year];
 			
->>>>>>> much improved version, many bug fixes, still exceptions
+
 		V[i] = parseInt(Vprev[i],10) + parseInt(ex[i][""+year],10) - parseInt(im[i][""+year],10) + parseInt(m2[i][""+year],10) - parseInt(m2[i][""+(year-1)],10);
 		
 		// if money available is ==0 prepare volumes such
