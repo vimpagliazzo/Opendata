@@ -130,10 +130,7 @@ function step4() {
 
 function step5() {
 	d3.csv("trade_share.csv", function(prop_) {
-		prop_.forEach(function(o){
-			prop[o.code] = o;
-		});
-// 		initTo0();
+		prop = prop_;
 	});
 }
 
@@ -145,8 +142,6 @@ function initTo0() {
 		Vq[i] = 0
 		q[i] = 0;
 	}
-	
-// 	animate();
 }
 
 function click(d) {
@@ -175,9 +170,9 @@ function animate() {
 			var o = prop[p];
 			// IF clause is never true
 			if ( (o.from == d.code && o.type=='ex') )
-				allex += ex[i][""+year] * q0[i] * o.amount; // should take q[o.from]
+				allex += ex[i][""+year] * q[i] * o.amount; // should take q[o.from]
 			if ( (o.to == d.code && o.type=='im') )
-				allim += im[i][""+year] * q0[i] * o.amount; // should take q[o.to]
+				allim += im[i][""+year] * q[i] * o.amount; // should take q[o.to]
 		}
 		Vq[i] = q[i]*V[i] + allex - allim;		
 	}
