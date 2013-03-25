@@ -146,6 +146,7 @@ function initTo0() {
 }
 
 function click(d) {
+
 	var clicked = g.selectAll("path").filter(function(e,i){
 		return e.id==d.id;
 	})[0][0];
@@ -210,7 +211,7 @@ function animate() {
 		Vq[i] = q[i]*Vprev[i]
 		+ allex
 		- allim
-		+ qex_avg/(100-qex_rest) * qex_rest/100 * im[i][""+year]
+		+ qex_avg/(100-qex_rest) * qex_rest/100 * ex[i][""+year]
 		- q[i] * qin_rest/100 * im[i][""+year];
 			
 
