@@ -155,24 +155,52 @@ function click(d) {
 	animate();
 }
 
-
+var E27 = ["DEU", "ITA"];
 var year = 1961;
 function animate() {
 	if ( year > 2011 )
 		return;
 	for ( var i in m2 ) {
 		var d = m2[i];
+		if ( i == "CAN" ) {
+			i = "CAN";
+		}
 		V[i] = parseInt(Vprev[i],10) + parseInt(ex[i][""+year],10) - parseInt(im[i][""+year],10) + parseInt(m2[i][""+year],10) - parseInt(m2[i][""+(year-1)],10);
 		Vprev[i] = V[i];
 		var allex = 0,
 		    allim = 0;
 		for ( var p in prop ) {
 			var o = prop[p];
-			// IF clause is never true
-			if ( (o.from == d.code && o.type=='ex') )
-				allex += ex[i][""+year] * q[i] * o.amount; // should take q[o.from]
-			if ( (o.to == d.code && o.type=='im') )
-				allim += im[i][""+year] * q[i] * o.amount; // should take q[o.to]
+			// IF clause is never true 
+			if ( (o.from == d.code && o.type=='ex') ) {
+				if ( isNaN(parseInt(ex[i][""+year])) ) {
+					continue;
+				}
+				if ( o.to == "E27" ) {
+					for ( var c in E27 ) {
+						allex = allex + parseInt(ex[i][""+year]) * parseInt(q[E27[c]]) * parseInt(o.amount); // should take q[o.from]
+					}
+				}
+				else if ( !isNaN(parseInt(q[o.to])) ) {
+					allex = allex + parseInt(ex[i][""+year]) * parseInt(q[o.to]) * parseInt(o.amount); // should take q[o.from]
+				}
+				if ( isNaN(allex) ) {
+					allex = 0;
+				}
+			}
+			if ( (o.to == d.code && o.type=='im') ) {
+				if ( isNaN(parseInt(im[i][""+year])) ) {
+					continue;
+				}
+				if ( o.from == "E27" ) {
+					for ( var c in E27 ) {
+						allim = allim + parseInt(im[i][""+year]) * parseInt(q[E27[c]]) * parseInt(o.amount); // should take q[o.to]
+					}
+				}
+				else if ( !isNaN(parseInt(q[o.from])) ) {
+					allim = allim + parseInt(im[i][""+year]) * parseInt(q[o.from]) * parseInt(o.amount); // should take q[o.to]
+				}
+			}
 		}
 		Vq[i] = q[i]*V[i] + allex - allim;		
 	}
@@ -188,6 +216,10 @@ function animate() {
 	});
 	year++;
 	setTimeout(animate, 1000);
+}
+
+function isdefined( variable) {
+    return (typeof(window[variable]) == "undefined")?  false: true;
 }
 
 </script>
