@@ -170,7 +170,7 @@ function animate() {
 			var o = prop[p];
 			// IF clause is never true
 			if ( (o.from == d.code && o.type=='ex') )
-				allex += ex[i][""+year] * q[i] * o.amount; // should take q[o.from]
+				allex += ex[i][""+year] * q[o.from] * o.amount; // should take q[o.from]
 			if ( (o.to == d.code && o.type=='im') )
 				allim += im[i][""+year] * q[i] * o.amount; // should take q[o.to]
 		}
