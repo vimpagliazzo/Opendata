@@ -162,26 +162,50 @@ function animate() {
 		return;
 	for ( var i in m2 ) {
 		var d = m2[i];
-		V[i] = parseInt(Vprev[i],10) + parseInt(ex[i][""+year],10) - parseInt(im[i][""+year],10) + parseInt(m2[i][""+year],10) - parseInt(m2[i][""+(year-1)],10);
-		Vprev[i] = V[i];
+		
 		var allex = 0,
 		    allim = 0;
+		    qin_rest = 0;
+		    qex_rest = 0;
+		    
 		for ( var p in prop ) {
 			var o = prop[p];
 			// IF clause is never true
-			if ( (o.from == d.code && o.type=='ex') )
-				allex += ex[i][""+year] * q[o.from] * o.amount; // should take q[o.from]
-			if ( (o.to == d.code && o.type=='im') )
-				allim += im[i][""+year] * q[i] * o.amount; // should take q[o.to]
+			if ( (o.from == d.code && o.type=='ex') ){
+				if (o.to!='E27' && o.to!='TWN'){
+					try {
+						allex += ex[i][""+year] * q[o.to] * o.amount/100;
+						qex_rest -= o.amount
+					} catch (e) {}
+				}
+			}
+			if ( (o.to == d.code && o.type=='in') ){
+					try {
+						allim += im[i][""+year] * q[i] * o.amount/100;
+						qin_rest -= o.amount
+					} catch (e) {}
+			}
 		}
-		Vq[i] = q[i]*V[i] + allex - allim;		
+		Vq[i] = q[i]*Vprev[i] + allex - allim;// + 0 * qex_rest * im[i][""+year] - 0 * qin-rest * im[i][""+year];
+			
+		V[i] = parseInt(Vprev[i],10) + parseInt(ex[i][""+year],10) - parseInt(im[i][""+year],10) + parseInt(m2[i][""+year],10) - parseInt(m2[i][""+(year-1)],10);
+		Vprev[i] = V[i];
 	}
 	for ( var o in Vq ) {
-		q[o] = Vq[o]/V[o];
+		if ( V[o]!=0)
+			q[o] = Vq[o]/V[o];
+		else
+			q[0] = 0
+			
+		if ( q[o]<0 )
+			q[o] = 0;
+			
+		if ( isNaN(q[o]))
+			q[o] = 0;
 	}
 	g.selectAll("path").style("fill", function(d) {
 		try { 
-			return "rgb("+q[d.id]*255+",0,0)";
+			return "rgb("+parseInt(q[d.id]*255,10)+",0,0)";
 		} catch (e) {
 			return "rgb(0,50,0)";
 		}
