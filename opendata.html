@@ -88,6 +88,7 @@ var m2 = new Object;
 var im = new Object;
 var ex = new Object;
 var V = new Object;
+var Vprev = new Object;
 var prop = new Object;
 var Vq = new Object;
 var q = new Object;
@@ -139,6 +140,7 @@ function step5() {
 function initTo0() {
 	for ( var i in m2 ) {
 		V[i] = 0;
+		Vprev[i]=m2[i]["1960"];
 		prop[i] = 0;
 		Vq[i] = 0
 		q[i] = 0;
@@ -164,16 +166,18 @@ function animate() {
 	if ( year > 2011 )
 		return;
 	for ( var i in m2 ) {
-		var d = m2[i];	
-		V[i] = ex[i][""+year] - im[i][""+year] + m2[i][""+year] - m2[i][""+(year-1)];
+		var d = m2[i];
+		V[i] = parseInt(Vprev[i],10) + parseInt(ex[i][""+year],10) - parseInt(im[i][""+year],10) + parseInt(m2[i][""+year],10) - parseInt(m2[i][""+(year-1)],10);
+		Vprev[i] = V[i];
 		var allex = 0,
 		    allim = 0;
 		for ( var p in prop ) {
 			var o = prop[p];
+			// IF clause is never true
 			if ( (o.from == d.code && o.type=='ex') )
-				allex += ex[i][""+year] * q0[i] * o.amount;
+				allex += ex[i][""+year] * q0[i] * o.amount; // should take q[o.from]
 			if ( (o.to == d.code && o.type=='im') )
-				allim += im[i][""+year] * q0[i] * o.amount;
+				allim += im[i][""+year] * q0[i] * o.amount; // should take q[o.to]
 		}
 		Vq[i] = q[i]*V[i] + allex - allim;		
 	}
