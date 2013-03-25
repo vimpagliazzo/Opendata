@@ -16,6 +16,7 @@ path {
 <div id='commands'>
 	<a id='changeToBlue' href='javascript:;'>Change to blue</a>
 	<a id='pickThreeCountries' href='javascript:;'>Find Switzerland</a>
+	<span id='yearCount'></span>
 </div>
 
 <script>
@@ -152,6 +153,7 @@ function click(d) {
 // 	alert(clicked.__data__.properties.name)
 	initTo0();
 	q[clicked.__data__.id] = 1;
+	year = 1961;
 	animate();
 }
 
@@ -162,58 +164,55 @@ function animate() {
 		return;
 	for ( var i in m2 ) {
 		var d = m2[i];
-		if ( i == "CAN" ) {
-			i = "CAN";
-		}
-		V[i] = parseInt(Vprev[i],10) + parseInt(ex[i][""+year],10) - parseInt(im[i][""+year],10) + parseInt(m2[i][""+year],10) - parseInt(m2[i][""+(year-1)],10);
-		Vprev[i] = V[i];
+
 		var allex = 0,
 		    allim = 0;
+		    qin_rest = 0;
+		    qex_rest = 0;
+
 		for ( var p in prop ) {
 			var o = prop[p];
-			// IF clause is never true 
-			if ( (o.from == d.code && o.type=='ex') ) {
-				if ( isNaN(parseInt(ex[i][""+year])) ) {
-					continue;
-				}
-				if ( o.to == "E27" ) {
-					for ( var c in E27 ) {
-						allex = allex + parseInt(ex[i][""+year]) * parseInt(q[E27[c]]) * parseInt(o.amount); // should take q[o.from]
-					}
-				}
-				else if ( !isNaN(parseInt(q[o.to])) ) {
-					allex = allex + parseInt(ex[i][""+year]) * parseInt(q[o.to]) * parseInt(o.amount); // should take q[o.from]
-				}
-				if ( isNaN(allex) ) {
-					allex = 0;
+			// IF clause is never true
+			if ( (o.from == d.code && o.type=='ex') ){
+				if (o.to!='E27' && o.to!='TWN'){
+					try {
+						allex += ex[i][""+year] * q[o.to] * o.amount/100;
+						qex_rest -= o.amount
+					} catch (e) {}
 				}
 			}
-			if ( (o.to == d.code && o.type=='im') ) {
-				if ( isNaN(parseInt(im[i][""+year])) ) {
-					continue;
-				}
-				if ( o.from == "E27" ) {
-					for ( var c in E27 ) {
-						allim = allim + parseInt(im[i][""+year]) * parseInt(q[E27[c]]) * parseInt(o.amount); // should take q[o.to]
-					}
-				}
-				else if ( !isNaN(parseInt(q[o.from])) ) {
-					allim = allim + parseInt(im[i][""+year]) * parseInt(q[o.from]) * parseInt(o.amount); // should take q[o.to]
-				}
+			if ( (o.to == d.code && o.type=='in') ){
+					try {
+						allim += im[i][""+year] * q[i] * o.amount/100;
+						qin_rest -= o.amount
+					} catch (e) {}
 			}
 		}
-		Vq[i] = q[i]*V[i] + allex - allim;		
+		Vq[i] = q[i]*Vprev[i] + allex - allim;// + 0 * qex_rest * im[i][""+year] - 0 * qin-rest * im[i][""+year];
+
+		V[i] = parseInt(Vprev[i],10) + parseInt(ex[i][""+year],10) - parseInt(im[i][""+year],10) + parseInt(m2[i][""+year],10) - parseInt(m2[i][""+(year-1)],10);
+		Vprev[i] = V[i];
 	}
 	for ( var o in Vq ) {
-		q[o] = Vq[o]/V[o];
+		if ( V[o]!=0)
+			q[o] = Vq[o]/V[o];
+		else
+			q[0] = 0
+
+		if ( q[o]<0 )
+			q[o] = 0;
+
+		if ( isNaN(q[o]))
+			q[o] = 0;
 	}
 	g.selectAll("path").style("fill", function(d) {
 		try { 
-			return "rgb("+q[d.id]*255+",0,0)";
+			return "rgb("+parseInt(q[d.id]*255,10)+",0,0)";
 		} catch (e) {
 			return "rgb(0,50,0)";
 		}
 	});
+	d3.selectAll("#yearCount").text("Year "+year);
 	year++;
 	setTimeout(animate, 1000);
 }
